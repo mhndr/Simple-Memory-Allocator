@@ -118,7 +118,7 @@ void* get(int size) {
             }*/
             ptr += size;
 	    ptr += WORD;
-	    printf("\ncreating new free block of size %d at %p",blk_sz-size,ptr);
+	    printf("\ncreating new free block of size %d at %p",blk_sz-(size+WORD),ptr);
             SET_SIZE(ptr,blk_sz-(size+WORD));
             SET_FREE(ptr);
             return payload+WORD;
