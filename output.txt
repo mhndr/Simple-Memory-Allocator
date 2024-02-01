@@ -1,0 +1,88 @@
+OUTPUT
+mem_init
+heap allocated
+heap base=0x100054000, heap max=0x100055000, end ptr=0x100054ffc,sz=4092
+
+PRINTING BLOCKS
+block of size 4092 is free at 0x100054000
+block of size 0 is not free at 0x100054ffc
+found last block
+
+SEARCHING FOR FREE BLOCK OF SIZE- 10
+block of size 4092 is free at 0x100054000
+allocating 14 bytes in free block of size 4092
+creating new free block of size 4082 at 0x10005400e
+
+SEARCHING FOR FREE BLOCK OF SIZE- 200
+block of size 14 is not free at 0x100054000
+block of size 4078 is free at 0x10005400e
+allocating 204 bytes in free block of size 4078
+creating new free block of size 3878 at 0x1000540da
+
+SEARCHING FOR FREE BLOCK OF SIZE- 500
+block of size 14 is not free at 0x100054000
+block of size 204 is not free at 0x10005400e
+block of size 3874 is free at 0x1000540da
+allocating 504 bytes in free block of size 3874
+creating new free block of size 3374 at 0x1000542d2
+
+FREE
+attempting to free an allocated block 
+freed block of size 14
+
+FREE
+attempting to free an allocated block 
+freed block of size 504
+
+PRINTING BLOCKS
+block of size 14 is free at 0x100054000
+block of size 204 is not free at 0x10005400e
+block of size 504 is free at 0x1000540da
+block of size 3370 is free at 0x1000542d2
+block of size 0 is not free at 0x100054ffc
+found last block
+
+SEARCHING FOR FREE BLOCK OF SIZE- 1
+block of size 14 is free at 0x100054000
+allocating 5 bytes in free block of size 14
+creating new free block of size 13 at 0x100054005
+
+SEARCHING FOR FREE BLOCK OF SIZE- 250
+block of size 5 is not free at 0x100054000
+block of size 9 is free at 0x100054005
+block of size 204 is not free at 0x10005400e
+block of size 504 is free at 0x1000540da
+allocating 254 bytes in free block of size 504
+creating new free block of size 254 at 0x1000541d8
+
+PRINTING BLOCKS
+block of size 5 is not free at 0x100054000
+block of size 9 is free at 0x100054005
+block of size 204 is not free at 0x10005400e
+block of size 254 is not free at 0x1000540da
+block of size 250 is free at 0x1000541d8
+block of size 3370 is free at 0x1000542d2
+block of size 0 is not free at 0x100054ffc
+found last block
+
+FREE
+attempting to free an allocated block 
+freed block of size 5
+
+FREE
+attempting to free an allocated block 
+freed block of size 204
+
+FREE
+attempting to free an allocated block 
+freed block of size 254
+
+PRINTING BLOCKS
+block of size 5 is free at 0x100054000
+block of size 9 is free at 0x100054005
+block of size 204 is free at 0x10005400e
+block of size 254 is free at 0x1000540da
+block of size 250 is free at 0x1000541d8
+block of size 3370 is free at 0x1000542d2
+block of size 0 is not free at 0x100054ffc
+found last blockProgram ended with exit code: 0
