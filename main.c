@@ -33,7 +33,7 @@ void print_heap(void);
 void defragment_blocks(void);
 
 int mem_init(void) {
-    heap_base = (char*)    mmap(NULL ,HEAP_SIZE, PROT_READ|PROT_WRITE,MAP_ANON|MAP_PRIVATE,0,0);
+    heap_base = (char*) mmap(NULL ,HEAP_SIZE, PROT_READ|PROT_WRITE,MAP_ANON|MAP_PRIVATE,0,0);
     printf("mem_init\n");
     //heap_base = (char*) calloc(HEAP_SIZE,sizeof(char));
     //heap_base = sbrk(HEAP_SIZE);
@@ -48,17 +48,15 @@ int mem_init(void) {
     SET_SIZE(heap_top,HEAP_SIZE-WORD);
     SET_FREE(heap_top);
 
-    
     int sz = GET_SIZE(heap_top);
     char *end = heap_base+sz;
-	printf("heap base=%p, heap max=%p, end ptr=%p,sz=%d",heap_base,heap_max,end,sz);
+    printf("heap base=%p, heap max=%p, end ptr=%p,sz=%d",heap_base,heap_max,end,sz);
     SET_SIZE(end,0);
     SET_ALLOC(end);
     return 1;
 }
 
 void print_heap(void) {
-
     printf("\n\nPRINTING HEAP\n");
     for(char *ptr = heap_base; ptr<heap_max;ptr+=sizeof(int))
     {
@@ -69,21 +67,21 @@ void print_heap(void) {
 
 void print_blocks(void) {
     char *ptr = heap_base;
-	printf("\n\nPRINTING BLOCKS\n");
+    printf("\n\nPRINTING BLOCKS\n");
     int sz =  0;//should end up with the contiguous allocated size
-	int free=0;
+    int free=0;
     while(1) {  
-		sz = GET_SIZE(ptr);
-		free = IS_FREE(ptr);	
+	sz = GET_SIZE(ptr);
+	free = IS_FREE(ptr);	
         printf("block of size %d is %s at %p",sz,free==0?"free":"not free",ptr);
         if(sz==0 && free==1) {
             printf("\nfound last block");
             break;
         }
         if('x'==getc(stdin))
-			break;
-		ptr += sz;
-		//ptr -=WORD;
+		break;
+	ptr += sz;
+	//ptr -=WORD;
     }
     return;
 }
@@ -96,19 +94,19 @@ void* get(int size) {
     char *payload = NULL;
     int blk_sz =  0;//should end up with the sum of all allocated block sizes
     printf("\n\nSEARCHING FOR FREE BLOCK OF SIZE- %d",size);
-	while(1) {
-        blk_sz = GET_SIZE(ptr);
-        int free = IS_FREE(ptr);
-        printf("\nblock of size %d is %s at %p",blk_sz,free==0?"free":"not free",ptr);
+    while(1) { 
+        blk_sz = GET_SIZE(ptr);	
+	int free = IS_FREE(ptr);
+    	printf("\nblock of size %d is %s at %p",blk_sz,free==0?"free":"not free",ptr);
         
-        if(blk_sz==0 && free==1) {
+    	if(blk_sz==0 && free==1) {
             printf("\nfound last block");
             break;
-        }
-		if(blk_sz == size+WORD && free==0) {
-			printf("\nfound free block of size %d",blk_sz);
-			return ptr+WORD;
-		}
+    	}
+	if(blk_sz == size+WORD && free==0) {
+	    printf("\nfound free block of size %d",blk_sz);
+	    return ptr+WORD;
+	}
        
         if(blk_sz > size+WORD && free==0) {
             printf("\nallocating %d bytes in free block of size %d",size+WORD,blk_sz);
@@ -119,8 +117,8 @@ void* get(int size) {
                 return payload+WORD;
             }*/
             ptr += size;
-			ptr += WORD;
-			printf("\ncreating new free block of size %d at %p",blk_sz-size,ptr);
+	    ptr += WORD;
+	    printf("\ncreating new free block of size %d at %p",blk_sz-size,ptr);
             SET_SIZE(ptr,blk_sz-(size+WORD));
             SET_FREE(ptr);
             return payload+WORD;
@@ -156,19 +154,17 @@ void free(void *ptr){
 }
 
 int main(void) {
-    
     mem_init();
-
     print_blocks();
     void* p1 = get(10);
     void* p2 = get(200);
     void* p3 = get(500);
     free(p1);
-//    free(p2);
+    //free(p2);
     free(p3);
     print_blocks();
     p1 = get(1);
-//    p2 = get(100);
+    //p2 = get(100);
     p3 = get(250);
     print_blocks();
     free(p1);
