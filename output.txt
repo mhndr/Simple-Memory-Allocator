@@ -7,18 +7,18 @@ block of size 4092 is free at 0x100054000
 block of size 0 is not free at 0x100054ffc
 found last block
 
-SEARCHING FOR FREE BLOCK OF SIZE- 10
+SEARCHING FOR FREE BLOCK OF SIZE - 10
 block of size 4092 is free at 0x100054000
 allocating 14 bytes in free block of size 4092
 creating new free block of size 4078 at 0x10005400e
 
-SEARCHING FOR FREE BLOCK OF SIZE- 200
+SEARCHING FOR FREE BLOCK OF SIZE - 200
 block of size 14 is not free at 0x100054000
 block of size 4078 is free at 0x10005400e
 allocating 204 bytes in free block of size 4078
 creating new free block of size 3874 at 0x1000540da
 
-SEARCHING FOR FREE BLOCK OF SIZE- 500
+SEARCHING FOR FREE BLOCK OF SIZE - 500
 block of size 14 is not free at 0x100054000
 block of size 204 is not free at 0x10005400e
 block of size 3874 is free at 0x1000540da
@@ -26,38 +26,44 @@ allocating 504 bytes in free block of size 3874
 creating new free block of size 3370 at 0x1000542d2
 
 FREE
-attempting to free an allocated block 
 freed block of size 14
 
 FREE
-attempting to free an allocated block 
+freed block of size 204
+
+FREE
 freed block of size 504
 
 PRINTING BLOCKS
 block of size 14 is free at 0x100054000
-block of size 204 is not free at 0x10005400e
+block of size 204 is free at 0x10005400e
 block of size 504 is free at 0x1000540da
 block of size 3370 is free at 0x1000542d2
 block of size 0 is not free at 0x100054ffc
 found last block
 
-SEARCHING FOR FREE BLOCK OF SIZE- 1
+SEARCHING FOR FREE BLOCK OF SIZE - 1
 block of size 14 is free at 0x100054000
 allocating 5 bytes in free block of size 14
 creating new free block of size 9 at 0x100054005
 
-SEARCHING FOR FREE BLOCK OF SIZE- 250
+SEARCHING FOR FREE BLOCK OF SIZE - 1
 block of size 5 is not free at 0x100054000
 block of size 9 is free at 0x100054005
-block of size 204 is not free at 0x10005400e
+allocating free block of size 9
+
+SEARCHING FOR FREE BLOCK OF SIZE - 250
+block of size 5 is not free at 0x100054000
+block of size 9 is not free at 0x100054005
+block of size 204 is free at 0x10005400e
 block of size 504 is free at 0x1000540da
 allocating 254 bytes in free block of size 504
 creating new free block of size 250 at 0x1000541d8
 
 PRINTING BLOCKS
 block of size 5 is not free at 0x100054000
-block of size 9 is free at 0x100054005
-block of size 204 is not free at 0x10005400e
+block of size 9 is not free at 0x100054005
+block of size 204 is free at 0x10005400e
 block of size 254 is not free at 0x1000540da
 block of size 250 is free at 0x1000541d8
 block of size 3370 is free at 0x1000542d2
@@ -65,16 +71,38 @@ block of size 0 is not free at 0x100054ffc
 found last block
 
 FREE
-attempting to free an allocated block 
 freed block of size 5
 
 FREE
-attempting to free an allocated block 
-freed block of size 204
+freed block of size 9
 
 FREE
-attempting to free an allocated block 
 freed block of size 254
+
+SEARCHING FOR FREE BLOCK OF SIZE - 2000
+block of size 5 is free at 0x100054000
+block of size 9 is free at 0x100054005
+block of size 204 is free at 0x10005400e
+block of size 254 is free at 0x1000540da
+block of size 250 is free at 0x1000541d8
+block of size 3370 is free at 0x1000542d2
+allocating 2004 bytes in free block of size 3370
+creating new free block of size 1366 at 0x100054aa6
+
+SEARCHING FOR FREE BLOCK OF SIZE - 2000
+block of size 5 is free at 0x100054000
+block of size 9 is free at 0x100054005
+block of size 204 is free at 0x10005400e
+block of size 254 is free at 0x1000540da
+block of size 250 is free at 0x1000541d8
+block of size 2004 is not free at 0x1000542d2
+block of size 1366 is free at 0x100054aa6
+block of size 0 is not free at 0x100054ffc
+ERROR - no free block available
+SUCCESS - expanded heap, trying again
+block of size 4096 is free at 0x100054ffc
+allocating 2004 bytes in free block of size 4096
+creating new free block of size 2092 at 0x1000557d0
 
 PRINTING BLOCKS
 block of size 5 is free at 0x100054000
@@ -82,7 +110,60 @@ block of size 9 is free at 0x100054005
 block of size 204 is free at 0x10005400e
 block of size 254 is free at 0x1000540da
 block of size 250 is free at 0x1000541d8
-block of size 3370 is free at 0x1000542d2
-block of size 0 is not free at 0x100054ffc
+block of size 2004 is not free at 0x1000542d2
+block of size 1366 is free at 0x100054aa6
+block of size 2004 is not free at 0x100054ffc
+block of size 2092 is free at 0x1000557d0
+block of size 0 is not free at 0x100055ffc
+found last block
+
+SEARCHING FOR FREE BLOCK OF SIZE - 2000
+block of size 5 is free at 0x100054000
+block of size 9 is free at 0x100054005
+block of size 204 is free at 0x10005400e
+block of size 254 is free at 0x1000540da
+block of size 250 is free at 0x1000541d8
+block of size 2004 is not free at 0x1000542d2
+block of size 1366 is free at 0x100054aa6
+block of size 2004 is not free at 0x100054ffc
+block of size 2092 is free at 0x1000557d0
+allocating 2004 bytes in free block of size 2092
+creating new free block of size 88 at 0x100055fa4
+
+PRINTING BLOCKS
+block of size 5 is free at 0x100054000
+block of size 9 is free at 0x100054005
+block of size 204 is free at 0x10005400e
+block of size 254 is free at 0x1000540da
+block of size 250 is free at 0x1000541d8
+block of size 2004 is not free at 0x1000542d2
+block of size 1366 is free at 0x100054aa6
+block of size 2004 is not free at 0x100054ffc
+block of size 2004 is not free at 0x1000557d0
+block of size 88 is free at 0x100055fa4
+block of size 0 is not free at 0x100055ffc
+found last block
+
+FREE
+freed block of size 2004
+
+FREE
+freed block of size 2004
+
+FREE
+ERROR - attempting to free a free block
+
+PRINTING BLOCKS
+block of size 5 is free at 0x100054000
+block of size 9 is free at 0x100054005
+block of size 204 is free at 0x10005400e
+block of size 254 is free at 0x1000540da
+block of size 250 is free at 0x1000541d8
+block of size 2004 is free at 0x1000542d2
+block of size 1366 is free at 0x100054aa6
+block of size 2004 is not free at 0x100054ffc
+block of size 2004 is free at 0x1000557d0
+block of size 88 is free at 0x100055fa4
+block of size 0 is not free at 0x100055ffc
 found last block
 Program ended with exit code: 0
