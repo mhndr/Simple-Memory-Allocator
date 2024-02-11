@@ -1,6 +1,9 @@
-/*
-Trying to create a very simple memory allocator. Just for learning
-*/
+//
+//  main.c
+//  Simple Memory Allocator
+//
+//  Created by Mahendar Srinivasan on 01/02/24.
+//
 
 #include <unistd.h>
 #include <stdio.h>
@@ -8,13 +11,13 @@ Trying to create a very simple memory allocator. Just for learning
 #include <sys/mman.h>
 
 char *heap_base;
-char *heap_top;
 char *heap_max;
 
-#define HEAP_SIZE 4096
-#define MIN_BLK_SZ 5
+#define CHUNK_SIZE 4096
 #define WORD 4
 #define DWORD 2*WORD
+#define MIN_BLK_SZ DWORD
+
 
 #define SET_ALLOC(p) *(unsigned int*)p =  *(int*)p|0x0001
 #define SET_FREE(p) *(unsigned int*)p = *(int*)p & 0xFFFE
@@ -24,7 +27,9 @@ char *heap_max;
 
 #define IS_FREE(p) *(unsigned int*)p&0x1
 
-#define GET_HEADER(p) ((unsigned int*)p)--
+//#define GET_HEADER(p) ((unsigned int*)p)--
+//#define GET_FOOTER(p) (unsigned int*)p+GET_SIZE(GET_HEADER(p))-DWORD
+
 
 int mem_init(void);
 void* get(int size);
@@ -34,57 +39,84 @@ void print_heap(void);
 void defragment_blocks(void);
 
 int mem_init(void) {
-    heap_base = (char*) mmap(NULL ,HEAP_SIZE, PROT_READ|PROT_WRITE,MAP_ANON|MAP_PRIVATE,0,0);
+    heap_base = (char*) mmap(NULL ,CHUNK_SIZE, PROT_READ|PROT_WRITE,MAP_ANON|MAP_PRIVATE,0,0);
     printf("mem_init\n");
-    //heap_base = (char*) calloc(HEAP_SIZE,sizeof(char));
-    //heap_base = sbrk(HEAP_SIZE);
+    //heap_base = (char*) calloc(CHUNK_SIZE,sizeof(char));
+    //heap_base = sbrk(CHUNK_SIZE);
     if(heap_base == NULL) {
         printf("Heap not allocated, can't proceed\n");
         return 0;
     }
     printf("heap allocated\n");
-    heap_top = heap_base;
-    heap_max = heap_base + HEAP_SIZE;
+    heap_max = heap_base + CHUNK_SIZE;
     
-    SET_SIZE(heap_top,HEAP_SIZE-WORD);
-    SET_FREE(heap_top);
+    SET_SIZE(heap_base,CHUNK_SIZE-WORD);
+    SET_FREE(heap_base);
+    char *footer = heap_base+CHUNK_SIZE;
+    footer -= DWORD;
+    SET_SIZE(footer,CHUNK_SIZE-WORD);
+    SET_FREE(footer);
 
     
-    int sz = GET_SIZE(heap_top);
+    int sz = GET_SIZE(heap_base);
     char *end = heap_base+sz;
-	printf("heap base=%p, heap max=%p, end ptr=%p,sz=%d",heap_base,heap_max,end,sz);
+	printf("heap base=%p, heap max=%p, end block=%p, available size=%d",heap_base,heap_max,end,sz);
     SET_SIZE(end,0);
     SET_ALLOC(end);
+    /*end += WORD;
+    SET_SIZE(end,0); //footer is probably not needed for end block
+    SET_ALLOC(end);*/
     return 1;
 }
 
 void print_heap(void) {
-
     printf("\n\nPRINTING HEAP\n");
     for(char *ptr = heap_base; ptr<heap_max;ptr+=sizeof(int))
     {
-        printf("%d",*(int*)ptr);
+		if(*(int*)ptr !=0) 
+        	printf("%p-%d\n",ptr,GET_SIZE(ptr));
     }
-    
 }
 
 void print_blocks(void) {
     char *ptr = heap_base;
 	printf("\n\nPRINTING BLOCKS\n");
-    int sz =  0;//should end up with the contiguous allocated size
+    int sz =  0; //should end up with the contiguous allocated size
 	int free=0;
+	char *prev = NULL;
     while(1) {  
 		sz = GET_SIZE(ptr);
 		free = IS_FREE(ptr);	
         printf("block of size %d is %s at %p",sz,free==0?"free":"not free",ptr);
         if(sz==0 && free==1) {
-            printf("\nfound last block");
+            printf("\nfound end of last block\n");
             break;
         }
+		ptr += sz;
+		printf("-%p",ptr);
+		prev = ptr-WORD;
         if('x'==getc(stdin))
 			break;
-		ptr += sz;
-		//ptr -=WORD;
+	
+    }
+    
+    //print reverse
+    printf("\n\nPRINTING BLOCKS REVERSE\n");
+    while(1) {
+		sz = GET_SIZE(ptr); 
+        free = IS_FREE(ptr);
+ 		printf("block of size %d is %s at %p",sz,free==0?"free":"not free",ptr);
+		ptr -= sz;
+		if(ptr+WORD==heap_base){
+			printf("\nfound start of first block\n");
+			break;
+		}
+		if(sz==0)
+			ptr -= WORD; //prev block footer
+
+		if('x'==getc(stdin)) {
+			break;
+		}
     }
     return;
 }
@@ -96,54 +128,73 @@ void* get(int size) {
     
     char *ptr = heap_base;
     char *payload = NULL;
-    int blk_sz =  0;//should end up with the sum of all allocated block sizes
-    printf("\n\nSEARCHING FOR FREE BLOCK OF SIZE - %d",size);
+    unsigned int blk_sz =  0;//should end up with the sum of all allocated block sizes
+    int free = -1;
+	printf("\n\nSEARCHING FOR FREE BLOCK OF SIZE - %d",size);
     
 	while(1) {
         blk_sz = GET_SIZE(ptr);
-        int free = IS_FREE(ptr);
+        free = IS_FREE(ptr);
         printf("\nblock of size %d is %s at %p",blk_sz,free==0?"free":"not free",ptr);
 
-		if(blk_sz == size+WORD && free==0) {
+		if(blk_sz == size+DWORD && free==0) {
 			printf("\nfound free block of size %d",blk_sz);
 			return ptr+WORD;
 		}
         
-        if(blk_sz==0 && free==1) {
+        else if(blk_sz==0 && free==1) {
             printf("\nERROR - no free block available");
             //expand heap and try again instead of returning NULL
-            void *ret =  mmap(heap_base ,2*HEAP_SIZE, PROT_READ|PROT_WRITE,MAP_ANON|MAP_PRIVATE,0,0);
+            //TODO: check if it should be 2*CHUNK_SIZE or just CHUNK_SIZE
+            void *ret =  mmap(heap_base ,2*CHUNK_SIZE, PROT_READ|PROT_WRITE,MAP_ANON|MAP_PRIVATE,0,0);
             if(!ret) {
                 printf("\nERROR - failed to expand heap");
                 return NULL;
             }
+            heap_max += CHUNK_SIZE;
             char *new = ptr;
-            SET_SIZE(new,HEAP_SIZE); //create a new block of size HEAP_SIZE
+			int avail_sz = CHUNK_SIZE-DWORD;
+            SET_SIZE(new,avail_sz); //create a new block of size CHUNK_SIZE
             SET_FREE(new);
-            new += HEAP_SIZE;
+            new += CHUNK_SIZE;
+			new -= WORD;
+			SET_SIZE(new,avail_sz); //footer
+            SET_FREE(new);
+			
+			new += WORD;
             SET_SIZE(new,0); //move the end block
             SET_ALLOC(new);
             printf("\nSUCCESS - expanded heap, trying again");
             continue;
         }
        
-        if(blk_sz > size+WORD && free==0) {
-            if(blk_sz-(size+WORD)<MIN_BLK_SZ) {
+        //TODO: add padding to adjust blocks to nearest multiple of 8
+		else if(blk_sz > size+DWORD && free==0) {
+            if(blk_sz-(size+DWORD)<MIN_BLK_SZ) {
                 //no need to fragment as block is too small.
                 printf("\nallocating free block of size %d",blk_sz);
                 SET_ALLOC(ptr);
                 return ptr+WORD;
             }
-            printf("\nallocating %d bytes in free block of size %d",size+WORD,blk_sz);
-            SET_SIZE(ptr,size+WORD);
+            printf("\nallocating %d bytes in free block of size %d",size+DWORD,blk_sz);
+            SET_SIZE(ptr,size+DWORD);
             SET_ALLOC(ptr);
             payload = ptr;
             ptr += size;
 			ptr += WORD;
-			printf("\ncreating new free block of size %d at %p",blk_sz-(size+WORD),ptr);
-            SET_SIZE(ptr,blk_sz-(size+WORD));
+            SET_SIZE(ptr,size+DWORD);//footer
+            SET_ALLOC(ptr);
+ 
+			ptr += WORD; //update next block header
+			int remainder = blk_sz-(size+DWORD);
+			printf("\ncreating new free block of size %d at %p",remainder,ptr);
+           	SET_SIZE(ptr,remainder);
             SET_FREE(ptr);
-            return payload+WORD;
+			ptr += remainder;//update next block footer
+			ptr -= WORD;
+			SET_SIZE(ptr,remainder);
+            SET_FREE(ptr);
+            return payload+WORD;	
         }
         ptr += blk_sz;
     }
@@ -152,41 +203,125 @@ void* get(int size) {
     return NULL;
 }
 
-void defragment_blocks(void){
-    
+void coalesce_blocks(void *ptr) {
+	if(ptr==NULL) 
+		return;
+	
+	char *start = (char *)ptr;
+	char *curr = start;
+	int size = 0;
+	int total = 0;
+	int count = 0;	
+
+	printf("\n\nCOALESCE FREE BLOCKS\n");
+
+	// forward check
+	printf("looking forward starting at %p \n",curr);
+	while(curr && (IS_FREE(curr))==0) {
+		size = GET_SIZE(curr);
+		printf("\tfound free block of size %d at %p\n",size,curr);
+		total += size;
+		curr += size;
+		count += 1;
+	}
+	printf("found %d free blocks totalling %d bytes",count,total);
+	
+	if(count>1){
+		SET_SIZE(ptr,total);
+		ptr += total;
+		ptr -= WORD;	
+		SET_SIZE(ptr,total);
+		count = 1;
+	}
+
+	if(start == heap_base) {
+		return;
+	}
+	
+	// backward check
+	printf("\nlooking backward starting at %p \n",curr);
+	curr = start-WORD;//prev block header
+	while(curr && (IS_FREE(curr))==0) {
+		size = GET_SIZE(curr);
+		printf("\tfound free block of size %d at %p\n",size,curr);
+		total += size;
+		curr -= size;
+		count += 1;
+		
+		if(curr+WORD==heap_base){
+			printf("found start of first block\n");
+			break;
+		}
+	}
+	printf("found %d free blocks totalling %d bytes\n",count,total);	
+
+	if(count>1) {
+		curr += WORD;
+		printf("creating new free block of size %d at %p\n",total,curr);
+		SET_SIZE(curr,total); // header of new coalesced block
+		curr += total;
+		curr -= WORD;
+		SET_SIZE(curr,total); // footer of new coalesced block
+	}
+	return;   
 }
 
-void free(void *ptr){
+void free(void *ptr) {
     if(ptr==NULL)
         return;
-    char* hdr = (char*)ptr;
+
+    char *hdr = (char*)ptr;
+	char *ftr = NULL;
     int free = 0;
-    hdr = hdr-WORD;
-    free = IS_FREE(hdr);
-    printf("\n\nFREE");
+   	int sz = 0; 
+
+	hdr = hdr-WORD;
+	sz = GET_SIZE(hdr);
+	ftr = (hdr + sz)-WORD;
+   	
+	free = IS_FREE(hdr);
+	
+	printf("\n\nFREE");
     if(free==0)
     {
-        printf("\nERROR - attempting to free an allocated block");
+        printf("\nERROR - attempting to free a freed block");
+        //TODO: add exceptions on double free
         return;
     }
     SET_FREE(hdr);
-    printf("\nfreed block of size %d",GET_SIZE(hdr));
-    return;
+	SET_FREE(ftr);
+    printf("\nfreed block of size %d, header:%p-%d, footer:%p-%d",sz,hdr,GET_SIZE(hdr),ftr,GET_SIZE(ftr));
+	
+	coalesce_blocks(hdr);
+    
+	return;
 }
+
+
+void mem_tests(){};
+void test_small(){};
+void test_large(){};
+void test_double_free(){};
+void test_leak(){};
+void test_use_after_free(){};
+void test_coalesce();
 
 int main(void) {
     
     mem_init();
-
+    print_heap();
     print_blocks();
+    
     void* p1 = get(10);
-    void* p2 = get(200);
+	void* p2 = get(200);
     void* p3 = get(500);
+	print_blocks();
     free(p1);
     free(p2);
     free(p3);
     print_blocks();
-    p1 = get(1);
+    return 0;
+	p1 = get(1);
     p2 = get(1);
     p3 = get(250);
     print_blocks();
@@ -195,16 +330,20 @@ int main(void) {
     free(p3);
     p1=get(2000);
     p2=get(2000);
-    print_blocks();
-    p2=get(2000);
+    p3=get(2000);
     print_blocks();
     free(p1);
     free(p2);
-    free(p3);//double free
+    free(p3);
+    print_blocks();
+    p1=get(3000);
+    p2=get(3000);
+    p3=get(3000);
+    print_blocks();
+    free(p1);
+    free(p2);
+    free(p3);
     print_blocks();
     return 0;
 }
 
-/**
- TODO: add exceptions on double free
-**/
