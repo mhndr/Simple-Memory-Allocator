@@ -1,4 +1,3 @@
-mahendar@Mahendars-MacBook-Air Simple Memory Allocator % cat main.c 
 //
 //  main.c
 //  Simple Memory Allocator
