@@ -75,7 +75,7 @@ void print_heap(void) {
     for(char *ptr = heap_base; ptr<heap_max;ptr+=sizeof(ulong))
     {
 		if(*(int*)ptr !=0) 
-        	printf("%p-%lu\n",ptr,GET_SIZE(ptr));
+        printf("%p-%lu\n",ptr,GET_SIZE(ptr));
     }
 }
 
