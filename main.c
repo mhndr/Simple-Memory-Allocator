@@ -13,22 +13,24 @@
 char *heap_base;
 char *heap_max;
 
+typedef unsigned long  ulong;
+
 #define CHUNK_SIZE 4096
-#define WORD 4
+#define WORD sizeof(ulong)
 #define DWORD 2*WORD
 #define MIN_BLK_SZ DWORD
 
 
-#define SET_ALLOC(p) *(unsigned int*)p =  *(int*)p|0x0001
-#define SET_FREE(p) *(unsigned int*)p = *(int*)p & 0xFFFE
+#define SET_ALLOC(p) *(ulong*)p =  *(ulong*)p|0x1
+#define SET_FREE(p) *(ulong*)p = *(ulong*)p & 0xFFFFFFFE
 
-#define SET_SIZE(p,size) *(unsigned int*)p=(size)<<3
-#define GET_SIZE(p) (*(unsigned int*)p&0xFFF8)>>3
+#define SET_SIZE(p,size) *(ulong*)p=(size)<<3
+#define GET_SIZE(p) (*(ulong*)p&0xFFFFFFF8)>>3
 
-#define IS_FREE(p) *(unsigned int*)p&0x1
+#define IS_FREE(p) *(ulong*)p&0x1
 
-//#define GET_HEADER(p) ((unsigned int*)p)--
-//#define GET_FOOTER(p) (unsigned int*)p+GET_SIZE(GET_HEADER(p))-DWORD
+//#define GET_HEADER(p) ((ulong*)p)--
+//#define GET_FOOTER(p) (ulong*)p+GET_SIZE(GET_HEADER(p))-DWORD
 
 
 int mem_init(void);
@@ -39,8 +41,9 @@ void print_heap(void);
 void defragment_blocks(void);
 
 int mem_init(void) {
-    heap_base = (char*) mmap(NULL ,CHUNK_SIZE, PROT_READ|PROT_WRITE,MAP_ANON|MAP_PRIVATE,0,0);
     printf("mem_init\n");
+	heap_base = (char*) mmap(NULL ,CHUNK_SIZE, PROT_READ|PROT_WRITE,MAP_ANON|MAP_PRIVATE,0,0);
+
     //heap_base = (char*) calloc(CHUNK_SIZE,sizeof(char));
     //heap_base = sbrk(CHUNK_SIZE);
     if(heap_base == NULL) {
@@ -63,18 +66,15 @@ int mem_init(void) {
 	printf("heap base=%p, heap max=%p, end block=%p, available size=%d",heap_base,heap_max,end,sz);
     SET_SIZE(end,0);
     SET_ALLOC(end);
-    /*end += WORD;
-    SET_SIZE(end,0); //footer is probably not needed for end block
-    SET_ALLOC(end);*/
     return 1;
 }
 
 void print_heap(void) {
     printf("\n\nPRINTING HEAP\n");
-    for(char *ptr = heap_base; ptr<heap_max;ptr+=sizeof(int))
+    for(char *ptr = heap_base; ptr<heap_max;ptr+=sizeof(ulong))
     {
 		if(*(int*)ptr !=0) 
-        	printf("%p-%d\n",ptr,GET_SIZE(ptr));
+        	printf("%p-%lu\n",ptr,GET_SIZE(ptr));
     }
 }
 
@@ -128,66 +128,79 @@ void* get(int size) {
     
     char *ptr = heap_base;
     char *payload = NULL;
-    unsigned int blk_sz =  0;//should end up with the sum of all allocated block sizes
+    ulong blk_sz =  0;//should end up with the sum of all allocated block sizes
     int free = -1;
+	int alloc_sz = size+DWORD;
 	printf("\n\nSEARCHING FOR FREE BLOCK OF SIZE - %d",size);
-    
+ 
+	//TODO:Fix the padding logic   
+/*    if(size<DWORD){
+		alloc_sz = 2*DWORD;
+	}
+	else {
+		alloc_sz = DWORD * (( size + (DWORD+ (DWORD-1)))/DWORD);
+	}
+	printf("\nreqested size:%d ,alloc size:%d ",size,alloc_sz);
+	getc(stdin);
+*/
 	while(1) {
         blk_sz = GET_SIZE(ptr);
         free = IS_FREE(ptr);
-        printf("\nblock of size %d is %s at %p",blk_sz,free==0?"free":"not free",ptr);
+        printf("\nblock of size %lu is %s at %p",blk_sz,free==0?"free":"not free",ptr);
 
-		if(blk_sz == size+DWORD && free==0) {
-			printf("\nfound free block of size %d",blk_sz);
+		if(blk_sz == alloc_sz && free==0) {
+			printf("\nfound free block of size %lu",blk_sz);
 			return ptr+WORD;
 		}
         
         else if(blk_sz==0 && free==1) {
             printf("\nERROR - no free block available");
             //expand heap and try again instead of returning NULL
-            //TODO: check if it should be 2*CHUNK_SIZE or just CHUNK_SIZE
-            void *ret =  mmap(heap_base ,2*CHUNK_SIZE, PROT_READ|PROT_WRITE,MAP_ANON|MAP_PRIVATE,0,0);
+            void *ret =  mmap(heap_base ,CHUNK_SIZE, PROT_READ|PROT_WRITE,MAP_ANON|MAP_PRIVATE,0,0);
             if(!ret) {
                 printf("\nERROR - failed to expand heap");
                 return NULL;
             }
             heap_max += CHUNK_SIZE;
             char *new = ptr;
-			int avail_sz = CHUNK_SIZE-DWORD;
-            SET_SIZE(new,avail_sz); //create a new block of size CHUNK_SIZE
+			int new_blk_sz = CHUNK_SIZE-WORD;
+            SET_SIZE(new,new_blk_sz); //create a new block of size CHUNK_SIZE
             SET_FREE(new);
             new += CHUNK_SIZE;
-			new -= WORD;
-			SET_SIZE(new,avail_sz); //footer
+			new -= DWORD;
+			SET_SIZE(new,new_blk_sz); //footer
             SET_FREE(new);
 			
 			new += WORD;
             SET_SIZE(new,0); //move the end block
             SET_ALLOC(new);
             printf("\nSUCCESS - expanded heap, trying again");
+			//maybe coalesce the free block just before the heap 
+			//expanded
+			//coalesce(ptr);
             continue;
         }
        
         //TODO: add padding to adjust blocks to nearest multiple of 8
-		else if(blk_sz > size+DWORD && free==0) {
-            if(blk_sz-(size+DWORD)<MIN_BLK_SZ) {
+		else if(blk_sz > alloc_sz && free==0) {
+            if(blk_sz-alloc_sz < MIN_BLK_SZ) {
                 //no need to fragment as block is too small.
-                printf("\nallocating free block of size %d",blk_sz);
+                printf("\nallocating free block of size %lu",blk_sz);
                 SET_ALLOC(ptr);
                 return ptr+WORD;
             }
-            printf("\nallocating %d bytes in free block of size %d",size+DWORD,blk_sz);
-            SET_SIZE(ptr,size+DWORD);
+            printf("\nallocating %d bytes in free block of size %lu",alloc_sz,blk_sz);
+            SET_SIZE(ptr,alloc_sz);
             SET_ALLOC(ptr);
             payload = ptr;
             ptr += size;
 			ptr += WORD;
-            SET_SIZE(ptr,size+DWORD);//footer
+            SET_SIZE(ptr,alloc_sz);//footer
             SET_ALLOC(ptr);
  
 			ptr += WORD; //update next block header
-			int remainder = blk_sz-(size+DWORD);
-			printf("\ncreating new free block of size %d at %p",remainder,ptr);
+			ulong remainder = blk_sz-alloc_sz;
+			printf("\ncreating new free block of size %lu at %p",remainder,ptr);
            	SET_SIZE(ptr,remainder);
             SET_FREE(ptr);
 			ptr += remainder;//update next block footer
@@ -290,7 +303,7 @@ void free(void *ptr) {
     }
     SET_FREE(hdr);
 	SET_FREE(ftr);
-    printf("\nfreed block of size %d, header:%p-%d, footer:%p-%d",sz,hdr,GET_SIZE(hdr),ftr,GET_SIZE(ftr));
+    printf("\nfreed block of size %d, header:%p-%lu footer:%p-%lu",sz,hdr,GET_SIZE(hdr),ftr,GET_SIZE(ftr));
 	
 	coalesce_blocks(hdr);
     
@@ -313,35 +326,40 @@ int main(void) {
     print_blocks();
     
     void* p1 = get(10);
+	print_heap();
+	print_blocks();
 	void* p2 = get(200);
+	print_blocks();
     void* p3 = get(500);
 	print_blocks();
     free(p1);
     free(p2);
     free(p3);
     print_blocks();
-    return 0;
-	p1 = get(1);
+/*	p1 = get(1);
     p2 = get(1);
     p3 = get(250);
-    print_blocks();
+	print_blocks();
     free(p1);
     free(p2);
     free(p3);
+	print_blocks();
     p1=get(2000);
     p2=get(2000);
     p3=get(2000);
-    print_blocks();
+	print_blocks();
     free(p1);
     free(p2);
     free(p3);
-    print_blocks();
-    p1=get(3000);
+	print_blocks();
+*/	p1=get(3000);
     p2=get(3000);
     p3=get(3000);
     print_blocks();
     free(p1);
+	print_blocks();
     free(p2);
+	print_blocks();
     free(p3);
     print_blocks();
     return 0;
