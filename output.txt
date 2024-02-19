@@ -1,279 +1,275 @@
 mem_init
 heap allocated
-heap base=0x104a00000, heap max=0x104a01000, end block=0x104a00ff8, available size=4088
+heap base=0x100054000, heap max=0x100055000, end block=0x100054ff8, available size=4088
 
 PRINTING HEAP
-0x104a00000-4088
-0x104a00ff0-4088
-0x104a00ff8-0
+0x100054000-4088
+0x100054ff0-4088
+0x100054ff8-0
 
 
 PRINTING BLOCKS
-block of size 4088 is free at 0x104a00000-0x104a00ff8
-block of size 0 is not free at 0x104a00ff8
+block of size 4088 is free at 0x100054000-0x100054ff8
+block of size 0 is not free at 0x100054ff8
 found end of last block
 
 
 PRINTING BLOCKS REVERSE
-block of size 0 is not free at 0x104a00ff8
-block of size 4088 is free at 0x104a00ff0
+block of size 0 is not free at 0x100054ff8-0x100054ff0
+block of size 4088 is free at 0x100054ff0
 found start of first block
 
 
 SEARCHING FOR FREE BLOCK OF SIZE - 10
-block of size 4088 is free at 0x104a00000
+block of size 4088 is free at 0x100054000
 allocating 26 bytes in free block of size 4088
-creating new free block of size 4062 at 0x104a0001a
+creating new free block of size 4062 at 0x10005401a
 
 PRINTING HEAP
-0x104a00000-26
-0x104a00010-1712128
-0x104a00018-266207232
-0x104a00ff0-4062
-0x104a00ff8-0
+0x100054000-26
+0x100054010-1712128
+0x100054018-266207232
+0x100054ff0-4062
+0x100054ff8-0
 
 
 PRINTING BLOCKS
-block of size 26 is not free at 0x104a00000-0x104a0001a
-block of size 4062 is free at 0x104a0001a-0x104a00ff8
-block of size 0 is not free at 0x104a00ff8
+block of size 26 is not free at 0x100054000-0x10005401a
+block of size 4062 is free at 0x10005401a-0x100054ff8
+block of size 0 is not free at 0x100054ff8
 found end of last block
 
 
 PRINTING BLOCKS REVERSE
-block of size 0 is not free at 0x104a00ff8
-block of size 4062 is free at 0x104a00ff0
-block of size 26 is not free at 0x104a00012
+block of size 0 is not free at 0x100054ff8-0x100054ff0
+block of size 4062 is free at 0x100054ff0-0x100054012
+block of size 26 is not free at 0x100054012
 found start of first block
 
 
 SEARCHING FOR FREE BLOCK OF SIZE - 200
-block of size 26 is not free at 0x104a00000
-block of size 4062 is free at 0x104a0001a
+block of size 26 is not free at 0x100054000
+block of size 4062 is free at 0x10005401a
 allocating 216 bytes in free block of size 4062
-creating new free block of size 3846 at 0x104a000f2
+creating new free block of size 3846 at 0x1000540f2
 
 PRINTING BLOCKS
-block of size 26 is not free at 0x104a00000-0x104a0001a
-block of size 216 is not free at 0x104a0001a-0x104a000f2
-block of size 3846 is free at 0x104a000f2-0x104a00ff8
-block of size 0 is not free at 0x104a00ff8
+block of size 26 is not free at 0x100054000-0x10005401a
+block of size 216 is not free at 0x10005401a-0x1000540f2
+block of size 3846 is free at 0x1000540f2-0x100054ff8
+block of size 0 is not free at 0x100054ff8
 found end of last block
 
 
 PRINTING BLOCKS REVERSE
-block of size 0 is not free at 0x104a00ff8
-block of size 3846 is free at 0x104a00ff0
-block of size 216 is not free at 0x104a000ea
-block of size 26 is not free at 0x104a00012
+block of size 0 is not free at 0x100054ff8-0x100054ff0
+block of size 3846 is free at 0x100054ff0-0x1000540ea
+block of size 216 is not free at 0x1000540ea-0x100054012
+block of size 26 is not free at 0x100054012
 found start of first block
 
 
 SEARCHING FOR FREE BLOCK OF SIZE - 500
-block of size 26 is not free at 0x104a00000
-block of size 216 is not free at 0x104a0001a
-block of size 3846 is free at 0x104a000f2
+block of size 26 is not free at 0x100054000
+block of size 216 is not free at 0x10005401a
+block of size 3846 is free at 0x1000540f2
 allocating 516 bytes in free block of size 3846
-creating new free block of size 3330 at 0x104a002f6
-
-PRINTING BLOCKS
-block of size 26 is not free at 0x104a00000-0x104a0001a
-block of size 216 is not free at 0x104a0001a-0x104a000f2
-block of size 516 is not free at 0x104a000f2-0x104a002f6
-block of size 3330 is free at 0x104a002f6-0x104a00ff8
-block of size 0 is not free at 0x104a00ff8
-found end of last block
-
-
-PRINTING BLOCKS REVERSE
-block of size 0 is not free at 0x104a00ff8
-block of size 3330 is free at 0x104a00ff0
-block of size 516 is not free at 0x104a002ee
-block of size 216 is not free at 0x104a000ea
-block of size 26 is not free at 0x104a00012
-found start of first block
-
+creating new free block of size 3330 at 0x1000542f6
 
 FREE
-freed block of size 26, header:0x104a00000-26 footer:0x104a00012-26
+freed block of size 26, header:0x100054000-26 footer:0x100054012-26
 
 COALESCE FREE BLOCKS
-looking forward starting at 0x104a00000 
-	found free block of size 26 at 0x104a00000
+looking forward starting at 0x100054000 
+	found free block of size 26 at 0x100054000
 found 1 free blocks totalling 26 bytes
 
 FREE
-freed block of size 216, header:0x104a0001a-216 footer:0x104a000ea-216
+freed block of size 216, header:0x10005401a-216 footer:0x1000540ea-216
 
 COALESCE FREE BLOCKS
-looking forward starting at 0x104a0001a 
-	found free block of size 216 at 0x104a0001a
+looking forward starting at 0x10005401a 
+	found free block of size 216 at 0x10005401a
 found 1 free blocks totalling 216 bytes
-looking backward starting at 0x104a000f2 
-	found free block of size 26 at 0x104a00012
+looking backward starting at 0x1000540f2 
+	found free block of size 26 at 0x100054012
 found start of first block
 found 2 free blocks totalling 242 bytes
-creating new free block of size 242 at 0x104a00000
+creating new free block of size 242 at 0x100054000
 
 
 FREE
-freed block of size 516, header:0x104a000f2-516 footer:0x104a002ee-516
+freed block of size 516, header:0x1000540f2-516 footer:0x1000542ee-516
 
 COALESCE FREE BLOCKS
-looking forward starting at 0x104a000f2 
-	found free block of size 516 at 0x104a000f2
-	found free block of size 3330 at 0x104a002f6
+looking forward starting at 0x1000540f2 
+	found free block of size 516 at 0x1000540f2
+	found free block of size 3330 at 0x1000542f6
 found 2 free blocks totalling 3846 bytes
-looking backward starting at 0x104a00ff8 
-	found free block of size 242 at 0x104a000ea
+looking backward starting at 0x100054ff8 
+	found free block of size 242 at 0x1000540ea
 found start of first block
 found 2 free blocks totalling 4088 bytes
-creating new free block of size 4088 at 0x104a00000
+creating new free block of size 4088 at 0x100054000
 
 
 PRINTING BLOCKS
-block of size 4088 is free at 0x104a00000-0x104a00ff8
-block of size 0 is not free at 0x104a00ff8
+block of size 4088 is free at 0x100054000-0x100054ff8
+block of size 0 is not free at 0x100054ff8
 found end of last block
 
 
 PRINTING BLOCKS REVERSE
-block of size 0 is not free at 0x104a00ff8
-block of size 4088 is free at 0x104a00ff0
+block of size 0 is not free at 0x100054ff8-0x100054ff0
+block of size 4088 is free at 0x100054ff0
 found start of first block
 
 
-SEARCHING FOR FREE BLOCK OF SIZE - 3000
-block of size 4088 is free at 0x104a00000
-allocating 3016 bytes in free block of size 4088
-creating new free block of size 1072 at 0x104a00bc8
-
-SEARCHING FOR FREE BLOCK OF SIZE - 3000
-block of size 3016 is not free at 0x104a00000
-block of size 1072 is free at 0x104a00bc8
-block of size 0 is not free at 0x104a00ff8
+SEARCHING FOR FREE BLOCK OF SIZE - 10000
+block of size 4088 is free at 0x100054000
+block of size 0 is not free at 0x100054ff8
 ERROR - no free block available
-SUCCESS - expanded heap, trying again
-block of size 4088 is free at 0x104a00ff8
-allocating 3016 bytes in free block of size 4088
-creating new free block of size 1072 at 0x104a01bc0
-
-SEARCHING FOR FREE BLOCK OF SIZE - 3000
-block of size 3016 is not free at 0x104a00000
-block of size 1072 is free at 0x104a00bc8
-block of size 3016 is not free at 0x104a00ff8
-block of size 1072 is free at 0x104a01bc0
-block of size 0 is not free at 0x104a01ff0
-ERROR - no free block available
-SUCCESS - expanded heap, trying again
-block of size 4088 is free at 0x104a01ff0
-allocating 3016 bytes in free block of size 4088
-creating new free block of size 1072 at 0x104a02bb8
-
-PRINTING BLOCKS
-block of size 3016 is not free at 0x104a00000-0x104a00bc8
-block of size 1072 is free at 0x104a00bc8-0x104a00ff8
-block of size 3016 is not free at 0x104a00ff8-0x104a01bc0
-block of size 1072 is free at 0x104a01bc0-0x104a01ff0
-block of size 3016 is not free at 0x104a01ff0-0x104a02bb8
-block of size 1072 is free at 0x104a02bb8-0x104a02fe8
-block of size 0 is not free at 0x104a02fe8
-found end of last block
-
-
-PRINTING BLOCKS REVERSE
-block of size 0 is not free at 0x104a02fe8
-block of size 1072 is free at 0x104a02fe0
-block of size 3016 is not free at 0x104a02bb0
-block of size 1072 is free at 0x104a01fe8
-block of size 3016 is not free at 0x104a01bb8
-block of size 1072 is free at 0x104a00ff0
-block of size 3016 is not free at 0x104a00bc0
-found start of first block
-
-
-FREE
-freed block of size 3016, header:0x104a00000-3016 footer:0x104a00bc0-3016
+SUCCESS - expanded heap
 
 COALESCE FREE BLOCKS
-looking forward starting at 0x104a00000 
-	found free block of size 3016 at 0x104a00000
-	found free block of size 1072 at 0x104a00bc8
-found 2 free blocks totalling 4088 bytes
-
-PRINTING BLOCKS
-block of size 4088 is free at 0x104a00000-0x104a00ff8
-block of size 3016 is not free at 0x104a00ff8-0x104a01bc0
-block of size 1072 is free at 0x104a01bc0-0x104a01ff0
-block of size 3016 is not free at 0x104a01ff0-0x104a02bb8
-block of size 1072 is free at 0x104a02bb8-0x104a02fe8
-block of size 0 is not free at 0x104a02fe8
-found end of last block
-
-
-PRINTING BLOCKS REVERSE
-block of size 0 is not free at 0x104a02fe8
-block of size 1072 is free at 0x104a02fe0
-block of size 3016 is not free at 0x104a02bb0
-block of size 1072 is free at 0x104a01fe8
-block of size 3016 is not free at 0x104a01bb8
-block of size 4088 is free at 0x104a00ff0
-found start of first block
-
-
-FREE
-freed block of size 3016, header:0x104a00ff8-3016 footer:0x104a01bb8-3016
-
-COALESCE FREE BLOCKS
-looking forward starting at 0x104a00ff8 
-	found free block of size 3016 at 0x104a00ff8
-	found free block of size 1072 at 0x104a01bc0
-found 2 free blocks totalling 4088 bytes
-looking backward starting at 0x104a01ff0 
-	found free block of size 4088 at 0x104a00ff0
+looking forward starting at 0x100054ff8 
+	found free block of size 4088 at 0x100054ff8
+found 1 free blocks totalling 4088 bytes
+looking backward starting at 0x100055ff0 
+	found free block of size 4088 at 0x100054ff0
 found start of first block
 found 2 free blocks totalling 8176 bytes
-creating new free block of size 8176 at 0x104a00000
+creating new free block of size 8176 at 0x100054000
 
+SUCCESS - coalesced free blocks
+Trying to allocate 10000 bytes
+block of size 8176 is free at 0x100054000
+block of size 0 is not free at 0x100055ff0
+ERROR - no free block available
+SUCCESS - expanded heap
 
-PRINTING BLOCKS
-block of size 8176 is free at 0x104a00000-0x104a01ff0
-block of size 3016 is not free at 0x104a01ff0-0x104a02bb8
-block of size 1072 is free at 0x104a02bb8-0x104a02fe8
-block of size 0 is not free at 0x104a02fe8
-found end of last block
-
-
-PRINTING BLOCKS REVERSE
-block of size 0 is not free at 0x104a02fe8
-block of size 1072 is free at 0x104a02fe0
-block of size 3016 is not free at 0x104a02bb0
-block of size 8176 is free at 0x104a01fe8
+COALESCE FREE BLOCKS
+looking forward starting at 0x100055ff0 
+	found free block of size 4088 at 0x100055ff0
+found 1 free blocks totalling 4088 bytes
+looking backward starting at 0x100056fe8 
+	found free block of size 8176 at 0x100055fe8
 found start of first block
+found 2 free blocks totalling 12264 bytes
+creating new free block of size 12264 at 0x100054000
+
+SUCCESS - coalesced free blocks
+Trying to allocate 10000 bytes
+block of size 12264 is free at 0x100054000
+allocating 10016 bytes in free block of size 12264
+creating new free block of size 2248 at 0x100056720
+
+SEARCHING FOR FREE BLOCK OF SIZE - 5000
+block of size 10016 is not free at 0x100054000
+block of size 2248 is free at 0x100056720
+block of size 0 is not free at 0x100056fe8
+ERROR - no free block available
+SUCCESS - expanded heap
+
+COALESCE FREE BLOCKS
+looking forward starting at 0x100056fe8 
+	found free block of size 4088 at 0x100056fe8
+found 1 free blocks totalling 4088 bytes
+looking backward starting at 0x100057fe0 
+	found free block of size 2248 at 0x100056fe0
+found 2 free blocks totalling 6336 bytes
+creating new free block of size 6336 at 0x100056720
+
+SUCCESS - coalesced free blocks
+Trying to allocate 5000 bytes
+block of size 6336 is free at 0x100056720
+allocating 5016 bytes in free block of size 6336
+creating new free block of size 1320 at 0x100057ab8
+
+SEARCHING FOR FREE BLOCK OF SIZE - 7000
+block of size 10016 is not free at 0x100054000
+block of size 5016 is not free at 0x100056720
+block of size 1320 is free at 0x100057ab8
+block of size 0 is not free at 0x100057fe0
+ERROR - no free block available
+SUCCESS - expanded heap
+
+COALESCE FREE BLOCKS
+looking forward starting at 0x100057fe0 
+	found free block of size 4088 at 0x100057fe0
+found 1 free blocks totalling 4088 bytes
+looking backward starting at 0x100058fd8 
+	found free block of size 1320 at 0x100057fd8
+found 2 free blocks totalling 5408 bytes
+creating new free block of size 5408 at 0x100057ab8
+
+SUCCESS - coalesced free blocks
+Trying to allocate 7000 bytes
+block of size 5408 is free at 0x100057ab8
+block of size 0 is not free at 0x100058fd8
+ERROR - no free block available
+SUCCESS - expanded heap
+
+COALESCE FREE BLOCKS
+looking forward starting at 0x100058fd8 
+	found free block of size 4088 at 0x100058fd8
+found 1 free blocks totalling 4088 bytes
+looking backward starting at 0x100059fd0 
+	found free block of size 5408 at 0x100058fd0
+found 2 free blocks totalling 9496 bytes
+creating new free block of size 9496 at 0x100057ab8
+
+SUCCESS - coalesced free blocks
+Trying to allocate 7000 bytes
+block of size 9496 is free at 0x100057ab8
+allocating 7016 bytes in free block of size 9496
+creating new free block of size 2480 at 0x100059620
+
+FREE
+freed block of size 10016, header:0x100054000-10016 footer:0x100056718-10016
+
+COALESCE FREE BLOCKS
+looking forward starting at 0x100054000 
+	found free block of size 10016 at 0x100054000
+found 1 free blocks totalling 10016 bytes
+
+FREE
+freed block of size 5016, header:0x100056720-5016 footer:0x100057ab0-5016
+
+COALESCE FREE BLOCKS
+looking forward starting at 0x100056720 
+	found free block of size 5016 at 0x100056720
+found 1 free blocks totalling 5016 bytes
+looking backward starting at 0x100057ab8 
+	found free block of size 10016 at 0x100056718
+found start of first block
+found 2 free blocks totalling 15032 bytes
+creating new free block of size 15032 at 0x100054000
 
 
 FREE
-freed block of size 3016, header:0x104a01ff0-3016 footer:0x104a02bb0-3016
+freed block of size 7016, header:0x100057ab8-7016 footer:0x100059618-7016
 
 COALESCE FREE BLOCKS
-looking forward starting at 0x104a01ff0 
-	found free block of size 3016 at 0x104a01ff0
-	found free block of size 1072 at 0x104a02bb8
-found 2 free blocks totalling 4088 bytes
-looking backward starting at 0x104a02fe8 
-	found free block of size 8176 at 0x104a01fe8
+looking forward starting at 0x100057ab8 
+	found free block of size 7016 at 0x100057ab8
+	found free block of size 2480 at 0x100059620
+found 2 free blocks totalling 9496 bytes
+looking backward starting at 0x100059fd0 
+	found free block of size 15032 at 0x100057ab0
 found start of first block
-found 2 free blocks totalling 12264 bytes
-creating new free block of size 12264 at 0x104a00000
+found 2 free blocks totalling 24528 bytes
+creating new free block of size 24528 at 0x100054000
 
 
 PRINTING BLOCKS
-block of size 12264 is free at 0x104a00000-0x104a02fe8
-block of size 0 is not free at 0x104a02fe8
+block of size 24528 is free at 0x100054000-0x100059fd0
+block of size 0 is not free at 0x100059fd0
 found end of last block
 
 
 PRINTING BLOCKS REVERSE
-block of size 0 is not free at 0x104a02fe8
-block of size 12264 is free at 0x104a02fe0
+block of size 0 is not free at 0x100059fd0-0x100059fc8
+block of size 24528 is free at 0x100059fc8
 found start of first block
+Program ended with exit code: 0
