@@ -154,6 +154,7 @@ void* get(int size) {
 
         if(blk_sz == alloc_sz && free==0) {
             printf("\nfound free block of size %lu",blk_sz);
+            SET_ALLOC(ptr);
             return ptr+WORD;
         }
         
