@@ -1,9 +1,12 @@
 //
-//  main.c
+//  mem_alloc.c
 //  Simple Memory Allocator
 //
-//  Created by Mahendar Srinivasan on 01/02/24.
+//  Created by Mahendar Srinivasan on 19/08/24.
 //
+
+#include "mem_alloc.h"
+
 
 #include <unistd.h>
 #include <stdio.h>
@@ -36,24 +39,26 @@ typedef unsigned long  ulong;
 //#define GET_FOOTER(p) (ulong*)p+GET_SIZE(GET_HEADER(p))-DWORD
 
 
-int mem_init(void);
-void* get(int size);
-void free(void *ptr);
-void print_blocks(void);
-void print_heap(void);
-void defragment_blocks(void);
-void* coalesce_blocks(void *ptr);
+int mem_init( void );
+void* get( int size );
+void put( void *ptr );
+static void* __get(int size);
+static void __put(void *ptr);
+void print_blocks( void );
+void print_heap( void );
+void defragment_blocks( void );
+void*coalesce_blocks( void *ptr );
 
 int mem_init(void) {
-    printf("mem_init\n");
+    fprintf(stderr,"mem_init\n");
     heap_base = (char*) mmap(NULL ,CHUNK_SIZE, PROT_READ|PROT_WRITE,MAP_ANON|MAP_PRIVATE,0,0);
     //heap_base = (char*) calloc(CHUNK_SIZE,sizeof(char));
     //heap_base = sbrk(CHUNK_SIZE);
     if(heap_base == NULL) {
-        printf("Heap not allocated, can't proceed\n");
+        fprintf(stderr,"Heap not allocated, can't proceed\n");
         return 0;
     }
-    printf("heap allocated\n");
+    fprintf(stderr,"heap allocated\n");
        heap_max = heap_base + CHUNK_SIZE;
     
     SET_SIZE(heap_base,CHUNK_SIZE-WORD);
@@ -68,17 +73,17 @@ int mem_init(void) {
     char *end = heap_base+sz;
     SET_SIZE(end,0);
     SET_ALLOC(end);
-    printf("heap base=%p, heap max=%p, end block=%p, available size=%d",heap_base,heap_max,end,sz);
+    fprintf(stderr,"heap base=%p, heap max=%p, end block=%p, available size=%d",heap_base,heap_max,end,sz);
 
     return 1;
 }
 
 void print_heap(void) {
-    printf("\n\nPRINTING HEAP\n");
+    fprintf(stderr,"\n\nPRINTING HEAP\n");
     for(char *ptr = heap_base; ptr<heap_max;ptr+=sizeof(ulong))
     {
         if(*(int*)ptr !=0)
-            printf("%p-%lu\n",ptr,GET_SIZE(ptr));
+            fprintf(stderr,"%p-%lu\n",ptr,GET_SIZE(ptr));
     }
 }
 
@@ -97,7 +102,7 @@ void print_blocks(void) {
             break;
         }
         ptr += sz;
-        printf("-%p",ptr);
+        printf("-%p\n",ptr);
         prev = ptr-WORD;
         if('x'==getc(stdin))
             break;
@@ -109,7 +114,7 @@ void print_blocks(void) {
     while(1) {
         sz = GET_SIZE(ptr);
         free = IS_FREE(ptr);
-         printf("block of size %d is %s at %p",sz,free==0?"free":"not free",ptr);
+        printf("block of size %d is %s at %p",sz,free==0?"free":"not free",ptr);
         ptr -= sz;
         if(ptr+WORD==heap_base){
             printf("\nfound start of first block\n");
@@ -117,7 +122,7 @@ void print_blocks(void) {
         }
         if(sz==0)
             ptr -= WORD; //prev block footer
-        printf("-%p",ptr);
+        printf("-%p\n",ptr);
         if('x'==getc(stdin)) {
             break;
         }
@@ -125,7 +130,14 @@ void print_blocks(void) {
     return;
 }
 
+
 void* get(int size) {
+    void *ret = __get(size);
+    printf("\nGET Returned - %p",ret);
+    return ret;
+}
+
+static void* __get(int size) {
     if(size<=0) {
         return NULL;
     }
@@ -135,7 +147,7 @@ void* get(int size) {
     ulong blk_sz =  0;
     int free = -1;
     int alloc_sz = size+DWORD;
-    printf("\n\nSEARCHING FOR FREE BLOCK OF SIZE - %d",size);
+    fprintf(stderr,"\n\nSEARCHING FOR FREE BLOCK OF SIZE - %d",size);
  
     //TODO:Fix the padding logic
 /*    if(size<DWORD){
@@ -144,26 +156,27 @@ void* get(int size) {
     else {
         alloc_sz = DWORD * (( size + (DWORD+ (DWORD-1)))/DWORD);
     }
-    printf("\nreqested size:%d ,alloc size:%d ",size,alloc_sz);
+    fprintf(stderr,"\nreqested size:%d ,alloc size:%d ",size,alloc_sz);
     getc(stdin);
 */
     while(1) {
         blk_sz = GET_SIZE(ptr);
         free = IS_FREE(ptr);
-        printf("\nblock of size %lu is %s at %p",blk_sz,free==0?"free":"not free",ptr);
+        fprintf(stderr,"\nblock of size %lu is %s at %p",blk_sz,free==0?"free":"not free",ptr);
 
         if(blk_sz == alloc_sz && free==0) {
-            printf("\nfound free block of size %lu",blk_sz);
+            fprintf(stderr,"\nfound free block of size %lu",blk_sz);
             SET_ALLOC(ptr);
+            //print_blocks();
             return ptr+WORD;
         }
         
         else if(blk_sz==0 && free==1) {
-            printf("\nERROR - no free block available");
+            fprintf(stderr,"\nERROR - no free block available");
             //expand heap and try again instead of returning NULL
             void *ret =  mmap(heap_base ,CHUNK_SIZE, PROT_READ|PROT_WRITE,MAP_ANON|MAP_PRIVATE,0,0);
             if(!ret) {
-                printf("\nERROR - failed to expand heap");
+                fprintf(stderr,"\nERROR - failed to expand heap");
                 return NULL;
             }
             heap_max += CHUNK_SIZE;
@@ -179,11 +192,13 @@ void* get(int size) {
             new += WORD;
             SET_SIZE(new,0); //move the end block
             SET_ALLOC(new);
-            printf("\nSUCCESS - expanded heap");
+            fprintf(stderr,"\nSUCCESS - expanded heap");
             //coalesce the free block just before the heap expanded
+            /* commented out to check if coalese has a bug
             ptr = (char*)coalesce_blocks((void*)ptr); //ptr should've moved back if coalesce happened
-            printf("\nSUCCESS - coalesced free blocks");
-            printf("\nTrying to allocate %d bytes",size);
+            fprintf(stderr,"\nSUCCESS - coalesced free blocks");
+            */
+            fprintf(stderr,"\nTrying to allocate %d bytes",size);
             continue;
         }
        
@@ -191,11 +206,12 @@ void* get(int size) {
         else if(blk_sz > alloc_sz && free==0) {
             if(blk_sz-alloc_sz < MIN_BLK_SZ) {
                 //no need to fragment as block is too small.
-                printf("\nallocating free block of size %lu",blk_sz);
+                fprintf(stderr,"\nallocating free block of size %lu",blk_sz);
                 SET_ALLOC(ptr);
+                //print_blocks();
                 return ptr+WORD;
             }
-            printf("\nallocating %d bytes in free block of size %lu",alloc_sz,blk_sz);
+            fprintf(stderr,"\nallocating %d bytes in free block of size %lu",alloc_sz,blk_sz);
             SET_SIZE(ptr,alloc_sz);
             SET_ALLOC(ptr);
             payload = ptr;
@@ -206,13 +222,14 @@ void* get(int size) {
  
             ptr += WORD; //update next block header
             ulong remainder = blk_sz-alloc_sz;
-            printf("\ncreating new free block of size %lu at %p",remainder,ptr);
-               SET_SIZE(ptr,remainder);
+            fprintf(stderr,"\ncreating new free block of size %lu at %p",remainder,ptr);
+            SET_SIZE(ptr,remainder);
             SET_FREE(ptr);
             ptr += remainder;//update next block footer
             ptr -= WORD;
             SET_SIZE(ptr,remainder);
             SET_FREE(ptr);
+            //print_blocks();
             return payload+WORD;
         }
         ptr += blk_sz; //blk_sz < alloc_sz
@@ -232,18 +249,18 @@ void* coalesce_blocks(void *ptr) {
     int total = 0;
     int count = 0;
 
-    printf("\n\nCOALESCE FREE BLOCKS\n");
+    fprintf(stderr,"\n\nCOALESCE FREE BLOCKS\n");
 
     // forward check
-    printf("looking forward starting at %p \n",curr);
+    fprintf(stderr,"looking forward starting at %p \n",curr);
     while(curr && (IS_FREE(curr))==0) {
         size = GET_SIZE(curr);
-        printf("\tfound free block of size %d at %p\n",size,curr);
+        fprintf(stderr,"\tfound free block of size %d at %p\n",size,curr);
         total += size;
         curr += size;
         count += 1;
     }
-    printf("found %d free blocks totalling %d bytes",count,total);
+    fprintf(stderr,"found %d free blocks totalling %d bytes",count,total);
     
     if(count>1){
         SET_SIZE(ptr,total);
@@ -260,25 +277,25 @@ void* coalesce_blocks(void *ptr) {
     }
     
     // backward check
-    printf("\nlooking backward starting at %p \n",curr);
+    fprintf(stderr,"\nlooking backward starting at %p \n",curr);
     curr = start-WORD;//prev block header
     while(curr && (IS_FREE(curr))==0) {
         size = GET_SIZE(curr);
-        printf("\tfound free block of size %d at %p\n",size,curr);
+        fprintf(stderr,"\tfound free block of size %d at %p\n",size,curr);
         total += size;
         curr -= size;
         count += 1;
         
         if(curr+WORD==heap_base){
-            printf("found start of first block\n");
+            fprintf(stderr,"found start of first block\n");
             break;
         }
     }
-    printf("found %d free blocks totalling %d bytes\n",count,total);
+    fprintf(stderr,"found %d free blocks totalling %d bytes\n",count,total);
 
     if(count>1) {
         curr += WORD;
-        printf("creating new free block of size %d at %p\n",total,curr);
+        fprintf(stderr,"creating new free block of size %d at %p\n",total,curr);
         SET_SIZE(curr,total); // header of new coalesced block
         SET_FREE(curr);
         ret = curr; //set ptr to the newly coalesced mega block
@@ -290,7 +307,11 @@ void* coalesce_blocks(void *ptr) {
     return ret;
 }
 
-void free(void *ptr) {
+void put(void *ptr) {
+    __put(ptr);
+}
+
+static void __put(void *ptr) {
     if(ptr==NULL)
         return;
 
@@ -305,77 +326,80 @@ void free(void *ptr) {
        
     free = IS_FREE(hdr);
     
-    printf("\n\nFREE");
+    fprintf(stderr,"\n\nFREE");
     if(free==0)
     {
-        printf("\nERROR - attempting to free a freed block");
+        fprintf(stderr,"\nERROR - attempting to free a freed block");
         //TODO: add exceptions on double free
         return;
     }
     SET_FREE(hdr);
     SET_FREE(ftr);
-    printf("\nfreed block of size %d, header:%p-%lu footer:%p-%lu",sz,hdr,GET_SIZE(hdr),ftr,GET_SIZE(ftr));
-    coalesce_blocks(hdr);
+    fprintf(stderr,"\nfreed block of size %d, header:%p-%lu footer:%p-%lu",sz,hdr,GET_SIZE(hdr),ftr,GET_SIZE(ftr));
+    //commented out to test if coalesce has a bug
+    //coalesce_blocks(hdr);
     return;
 }
 
-
+/*
 void mem_tests();
 void test_small();
 void test_large();
 void test_double_free();
 void test_leak();
 void test_use_after_free();
-void test_coalesce();
+void test_coalesce();*/
 
+/*
 int main(void) {
     
     mem_init();
     print_heap();
-    print_blocks();
+    //print_blocks();
     
     void* p1 = get(10);
     print_heap();
-    print_blocks();
+    //print_blocks();
     void* p2 = get(200);
-    print_blocks();
+    //print_blocks();
     void* p3 = get(500);
-//    print_blocks();
-    free(p1);
-    free(p2);
-    free(p3);
-//    print_blocks();
-/*    p1 = get(1);
+//    //print_blocks();
+    put(p1);
+    put(p2);
+    put(p3);
+//    //print_blocks();
+    p1 = get(1);
     p2 = get(1);
     p3 = get(250);
-    print_blocks();
-    free(p1);
-    free(p2);
-    free(p3);
-    print_blocks();
+    //print_blocks();
+    put(p1);
+    put(p2);
+    put(p3);
+    //print_blocks();
     p1=get(2000);
     p2=get(2000);
     p3=get(2000);
-    print_blocks();
-    free(p1);
-    free(p2);
-    free(p3);
-*/    print_blocks();
+    //print_blocks();
+    put(p1);
+    put(p2);
+    put(p3);
+    //print_blocks();
 //    p1=get(3000);
 //    p2=get(3000);
 //    p3=get(3000);
-//    free(p1);
-//    free(p2);
-//    free(p3);
+//    put(p1);
+//    put(p2);
+//    put(p3);
     p1=get(10000);
     p2=get(5000);
     p3=get(7000);
-    print_blocks();
-    free(p1);
-    free(p2);
-    free(p3);
+    //print_blocks();
+    put(p1);
+    put(p2);
+    put(p3);
 
-    print_blocks();
+    //print_blocks();
     return 0;
 }
+*/
 
