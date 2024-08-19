@@ -1,0 +1,289 @@
+mem_init
+heap allocated
+heap base=0x100054000, heap max=0x100055000, end block=0x100054ff8, available size=4088
+Enter key - 1
+
+Enter val - 1
+
+
+SEARCHING FOR FREE BLOCK OF SIZE - 16
+block of size 4088 is free at 0x100054000
+allocating 32 bytes in free block of size 4088
+creating new free block of size 4056 at 0x100054020
+GET Returned - 0x100054008
+0x100054008->
+1-1-> size-1
+
+Enter key - 2
+
+Enter val - 2
+
+
+SEARCHING FOR FREE BLOCK OF SIZE - 16
+block of size 32 is not free at 0x100054000
+block of size 4056 is free at 0x100054020
+allocating 32 bytes in free block of size 4056
+creating new free block of size 4024 at 0x100054040
+GET Returned - 0x100054028
+0x100054028->0x100054008->
+2-2->1-1-> size-2
+
+Enter key - 3
+
+Enter val - 3
+
+
+SEARCHING FOR FREE BLOCK OF SIZE - 16
+block of size 32 is not free at 0x100054000
+block of size 32 is not free at 0x100054020
+block of size 4024 is free at 0x100054040
+allocating 32 bytes in free block of size 4024
+creating new free block of size 3992 at 0x100054060
+GET Returned - 0x100054048
+0x100054048->0x100054028->0x100054008->
+3-3->2-2->1-1-> size-3
+
+Enter key - 4
+
+Enter val - 4
+
+
+SEARCHING FOR FREE BLOCK OF SIZE - 16
+block of size 32 is not free at 0x100054000
+block of size 32 is not free at 0x100054020
+block of size 32 is not free at 0x100054040
+block of size 3992 is free at 0x100054060
+allocating 32 bytes in free block of size 3992
+creating new free block of size 3960 at 0x100054080
+GET Returned - 0x100054068
+0x100054068->0x100054048->0x100054028->0x100054008->
+4-4->3-3->2-2->1-1-> size-4
+
+Enter key - 5
+
+Enter val - 5
+
+
+SEARCHING FOR FREE BLOCK OF SIZE - 16
+block of size 32 is not free at 0x100054000
+block of size 32 is not free at 0x100054020
+block of size 32 is not free at 0x100054040
+block of size 32 is not free at 0x100054060
+block of size 3960 is free at 0x100054080
+allocating 32 bytes in free block of size 3960
+creating new free block of size 3928 at 0x1000540a0
+GET Returned - 0x100054088
+0x100054088->0x100054068->0x100054048->0x100054028->0x100054008->
+5-5->4-4->3-3->2-2->1-1-> size-5
+
+Enter key - 6
+
+Enter val - 6
+freeing node 1-1
+
+FREE
+freed block of size 32, header:0x100054000-32 footer:0x100054018-32
+
+PRINTING BLOCKS
+block of size 32 is free at 0x100054000-0x100054020
+block of size 32 is not free at 0x100054020-0x100054040
+
+block of size 32 is not free at 0x100054040-0x100054060
+
+block of size 32 is not free at 0x100054060-0x100054080
+
+block of size 32 is not free at 0x100054080-0x1000540a0
+
+block of size 3928 is free at 0x1000540a0-0x100054ff8
+
+block of size 0 is not free at 0x100054ff8
+found end of last block
+
+
+PRINTING BLOCKS REVERSE
+block of size 0 is not free at 0x100054ff8-0x100054ff0
+
+block of size 3928 is free at 0x100054ff0-0x100054098
+
+block of size 32 is not free at 0x100054098-0x100054078
+
+block of size 32 is not free at 0x100054078-0x100054058
+
+block of size 32 is not free at 0x100054058-0x100054038
+
+block of size 32 is not free at 0x100054038-0x100054018
+
+block of size 32 is free at 0x100054018
+found start of first block
+
+
+SEARCHING FOR FREE BLOCK OF SIZE - 16
+block of size 32 is free at 0x100054000
+found free block of size 32
+GET Returned - 0x100054008
+0x100054008->0x100054088->0x100054068->0x100054048->0x100054028->
+6-6->5-5->4-4->3-3->2-2-> size-5
+
+Enter key - 7
+
+Enter val - 7
+freeing node 2-2
+
+FREE
+freed block of size 32, header:0x100054020-32 footer:0x100054038-32
+
+PRINTING BLOCKS
+block of size 32 is not free at 0x100054000-0x100054020
+block of size 32 is free at 0x100054020-0x100054040
+
+block of size 32 is not free at 0x100054040-0x100054060
+
+block of size 32 is not free at 0x100054060-0x100054080
+
+block of size 32 is not free at 0x100054080-0x1000540a0
+
+block of size 3928 is free at 0x1000540a0-0x100054ff8
+
+block of size 0 is not free at 0x100054ff8
+found end of last block
+
+
+PRINTING BLOCKS REVERSE
+block of size 0 is not free at 0x100054ff8-0x100054ff0
+
+block of size 3928 is free at 0x100054ff0-0x100054098
+
+block of size 32 is not free at 0x100054098-0x100054078
+
+block of size 32 is not free at 0x100054078-0x100054058
+
+block of size 32 is not free at 0x100054058-0x100054038
+
+block of size 32 is free at 0x100054038-0x100054018
+
+block of size 32 is free at 0x100054018
+found start of first block
+
+
+SEARCHING FOR FREE BLOCK OF SIZE - 16
+block of size 32 is not free at 0x100054000
+block of size 32 is free at 0x100054020
+found free block of size 32
+GET Returned - 0x100054028
+0x100054028->0x100054008->0x100054088->0x100054068->0x100054048->
+7-7->6-6->5-5->4-4->3-3-> size-5
+
+Enter key - 4
+val - 4
+0x100054068->0x100054028->0x100054008->0x100054088->0x100054048->
+4-4->7-7->6-6->5-5->3-3-> size-5
+
+Enter key - 8
+
+Enter val - 8
+freeing node 3-3
+
+FREE
+freed block of size 32, header:0x100054040-32 footer:0x100054058-32
+
+PRINTING BLOCKS
+block of size 32 is not free at 0x100054000-0x100054020
+block of size 32 is not free at 0x100054020-0x100054040
+
+block of size 32 is free at 0x100054040-0x100054060
+
+block of size 32 is not free at 0x100054060-0x100054080
+
+block of size 32 is not free at 0x100054080-0x1000540a0
+
+block of size 3928 is free at 0x1000540a0-0x100054ff8
+
+block of size 0 is not free at 0x100054ff8
+found end of last block
+
+
+PRINTING BLOCKS REVERSE
+block of size 0 is not free at 0x100054ff8-0x100054ff0
+
+block of size 3928 is free at 0x100054ff0-0x100054098
+
+block of size 32 is not free at 0x100054098-0x100054078
+
+block of size 32 is not free at 0x100054078-0x100054058
+
+block of size 32 is free at 0x100054058-0x100054038
+
+block of size 32 is free at 0x100054038-0x100054018
+
+block of size 32 is free at 0x100054018
+found start of first block
+
+
+SEARCHING FOR FREE BLOCK OF SIZE - 16
+block of size 32 is not free at 0x100054000
+block of size 32 is not free at 0x100054020
+block of size 32 is free at 0x100054040
+found free block of size 32
+GET Returned - 0x100054048
+0x100054048->0x100054068->0x100054028->0x100054008->0x100054088->
+8-8->4-4->7-7->6-6->5-5-> size-5
+
+Enter key - 9
+
+Enter val - 9
+freeing node 5-5
+
+FREE
+freed block of size 32, header:0x100054080-32 footer:0x100054098-32
+
+PRINTING BLOCKS
+block of size 32 is not free at 0x100054000-0x100054020
+block of size 32 is not free at 0x100054020-0x100054040
+
+block of size 32 is not free at 0x100054040-0x100054060
+
+block of size 32 is not free at 0x100054060-0x100054080
+
+block of size 32 is free at 0x100054080-0x1000540a0
+
+block of size 3928 is free at 0x1000540a0-0x100054ff8
+
+block of size 0 is not free at 0x100054ff8
+found end of last block
+
+
+PRINTING BLOCKS REVERSE
+block of size 0 is not free at 0x100054ff8-0x100054ff0
+
+block of size 3928 is free at 0x100054ff0-0x100054098
+
+block of size 32 is free at 0x100054098-0x100054078
+
+block of size 32 is not free at 0x100054078-0x100054058
+
+block of size 32 is free at 0x100054058-0x100054038
+
+block of size 32 is free at 0x100054038-0x100054018
+
+block of size 32 is free at 0x100054018
+found start of first block
+
+
+SEARCHING FOR FREE BLOCK OF SIZE - 16
+block of size 32 is not free at 0x100054000
+block of size 32 is not free at 0x100054020
+block of size 32 is not free at 0x100054040
+block of size 32 is not free at 0x100054060
+block of size 32 is free at 0x100054080
+found free block of size 32
+GET Returned - 0x100054088
+0x100054088->0x100054048->0x100054068->0x100054028->0x100054008->
+9-9->8-8->4-4->7-7->6-6-> size-5
+
+Enter key - 
+4
+val - 4
+0x100054068->0x100054088->0x100054048->0x100054028->0x100054008->
+4-4->9-9->8-8->7-7->6-6-> size-5
+
+Enter key - 
