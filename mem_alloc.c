@@ -193,11 +193,8 @@ static void* __get(int size) {
             SET_SIZE(new,0); //move the end block
             SET_ALLOC(new);
             fprintf(stderr,"\nSUCCESS - expanded heap");
-            //coalesce the free block just before the heap expanded
-            /* commented out to check if coalese has a bug
             ptr = (char*)coalesce_blocks((void*)ptr); //ptr should've moved back if coalesce happened
             fprintf(stderr,"\nSUCCESS - coalesced free blocks");
-            */
             fprintf(stderr,"\nTrying to allocate %d bytes",size);
             continue;
         }
@@ -336,8 +333,7 @@ static void __put(void *ptr) {
     SET_FREE(hdr);
     SET_FREE(ftr);
     fprintf(stderr,"\nfreed block of size %d, header:%p-%lu footer:%p-%lu",sz,hdr,GET_SIZE(hdr),ftr,GET_SIZE(ftr));
-    //commented out to test if coalesce has a bug
-    //coalesce_blocks(hdr);
+    coalesce_blocks(hdr);
     return;
 }
 
